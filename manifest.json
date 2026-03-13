@@ -1,0 +1,26 @@
+{
+  "name": "SteigerCalc Pro - Scaffolding Cost Estimator",
+  "short_name": "SteigerCalc",
+  "description": "Professional scaffolding cost calculator for large construction projects",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#d4a017",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230f1419' width='512' height='512' rx='64'/><rect fill='%23d4a017' x='96' y='128' width='320' height='256' rx='16'/><rect fill='%230f1419' x='128' y='160' width='64' height='64'/><rect fill='%230f1419' x='224' y='160' width='64' height='64'/><rect fill='%230f1419' x='320' y='160' width='64' height='64'/><rect fill='%230f1419' x='128' y='288' width='64' height='64'/><rect fill='%230f1419' x='224' y='288' width='64' height='64'/><rect fill='%230f1419' x='320' y='288' width='64' height='64'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230f1419' width='192' height='192' rx='32'/><rect fill='%23d4a017' x='32' y='48' width='128' height='96' rx='8'/><rect fill='%230f1419' x='48' y='64' width='24' height='24'/><rect fill='%230f1419' x='84' y='64' width='24' height='24'/><rect fill='%230f1419' x='120' y='64' width='24' height='24'/><rect fill='%230f1419' x='48' y='104' width='24' height='24'/><rect fill='%230f1419' x='84' y='104' width='24' height='24'/><rect fill='%230f1419' x='120' y='104' width='24' height='24'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "utilities", "business"],
+  "lang": "en",
+  "dir": "ltr"
+}

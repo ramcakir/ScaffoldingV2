@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SteigerCalc Pro - Scaffolding Cost Estimator</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f1419">
+  <meta name="description" content="Professional scaffolding cost calculator for large construction projects">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23d4a017' width='100' height='100' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>SC</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0f1419;
+      --bg-secondary: #1a2028;
+      --bg-card: #232b35;
+      --bg-elevated: #2d3640;
+      --fg-primary: #f0f2f5;
+      --fg-secondary: #9ca3af;
+      --fg-muted: #6b7280;
+      --accent: #d4a017;
+      --accent-hover: #e8b41c;
+      --accent-muted: rgba(212, 160, 23, 0.15);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border: #3d4654;
+      --border-focus: #d4a017;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--fg-primary);
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--fg-muted);
+    }
+
+    /* Background pattern */
+    .bg-pattern {
+      background-image: 
+        linear-gradient(rgba(212, 160, 23, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 160, 23, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Glow effects */
+    .accent-glow {
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.2);
+    }
+
+    /* Input styling */
+    .input-field {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--fg-primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-muted);
+    }
+    .input-field::placeholder {
+      color: var(--fg-muted);
+    }
+
+    /* Button styling */
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-primary);
+      font-weight: 600;
+      padding: 0.625rem 1.25rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--fg-primary);
+      font-weight: 500;
+      padding: 0.625rem 1.25rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-card);
+      border-color: var(--fg-muted);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      font-weight: 500;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--danger);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* Table styling */
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .data-table th {
+      background: var(--bg-secondary);
+      color: var(--fg-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .data-table td {
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+    .data-table tbody tr:hover {
+      background: var(--accent-muted);
+    }
+    .data-table input {
+      width: 100%;
+      min-width: 50px;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .animate-slide-in {
+      animation: slideInRight 0.4s ease forwards;
+    }
+
+    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+    .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+    .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+    .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-fade-in-up,
+      .animate-slide-in {
+        animation: none;
+        opacity: 1;
+      }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    /* Tabs */
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      color: var(--fg-secondary);
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .tab-btn:hover {
+      color: var(--fg-primary);
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Status badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .badge-success {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+    }
+    .badge-warning {
+      background: var(--accent-muted);
+      color: var(--accent);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      color: var(--fg-primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      z-index: 50;
+      border: 1px solid var(--border);
+    }
+    .tooltip:hover::after {
+      opacity: 1;
+      visibility: visible;
+      bottom: calc(100% + 8px);
+    }
+
+    /* Focus visible */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-pattern">
+  <!-- Header -->
+  <header class="border-b border-[var(--border)] bg-[var(--bg-secondary)]/80 backdrop-blur-sm sticky top-0 z-50 no-print">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-[var(--accent)] flex items-center justify-center">
+          <svg class="w-6 h-6 text-[var(--bg-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold tracking-tight">SteigerCalc Pro</h1>
+          <p class="text-xs text-[var(--fg-muted)]">Scaffolding Cost Estimator</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="badge badge-success">PWA</span>
+        <button id="installBtn" class="btn-secondary text-sm hidden" aria-label="Install app">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Install
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Price Level Info -->
+    <div class="mb-6 animate-fade-in-up stagger-1">
+      <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-[var(--accent-muted)] flex items-center justify-center">
+            <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="font-semibold text-lg" id="priceLevelTitle">Price Level: Western Europe, Q1 2026</h2>
+            <p class="text-sm text-[var(--fg-secondary)]">Industry-standard rates for fixed scaffolding systems</p>
+          </div>
+        </div>
+        <button id="settingsBtn" class="btn-secondary" aria-label="Open settings">
+          <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Unit Rates Card -->
+    <div class="mb-6 animate-fade-in-up stagger-2">
+      <div class="card">
+        <div class="p-4 border-b border-[var(--border)] flex items-center justify-between">
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Unit Rates
+          </h3>
+          <button id="editRatesBtn" class="text-sm text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors">
+            Edit Rates
+          </button>
+        </div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-[var(--bg-secondary)] rounded-lg p-4">
+            <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-1">Assembly Rate</div>
+            <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="displayAssemblyRate">EUR 18.67</div>
+            <div class="text-xs text-[var(--fg-secondary)] mt-1">per m3 (mounting)</div>
+          </div>
+          <div class="bg-[var(--bg-secondary)] rounded-lg p-4">
+            <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-1">Disassembly Rate</div>
+            <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="displayDisassemblyRate">EUR 18.67</div>
+            <div class="text-xs text-[var(--fg-secondary)] mt-1">per m3 (dismounting)</div>
+          </div>
+          <div class="bg-[var(--bg-secondary)] rounded-lg p-4">
+            <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-1">Weekly Rental</div>
+            <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="displayRentalRate">EUR 0.41</div>
+            <div class="text-xs text-[var(--fg-secondary)] mt-1">per m3 per week</div>
+          </div>
+        </div>
+        <div class="px-4 pb-4">
+          <div class="bg-[var(--accent-muted)] rounded-lg p-3 text-sm">
+            <span class="text-[var(--accent)] font-medium">Recommended ranges:</span>
+            <span class="text-[var(--fg-secondary)] ml-2">Assembly: 10-20 EUR/m3 | Rental: 0.30-0.70 EUR/m3/week</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Calculation Table -->
+    <div class="mb-6 animate-fade-in-up stagger-3">
+      <div class="card">
+        <div class="p-4 border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+            </svg>
+            Scaffolding Items
+          </h3>
+          <div class="flex gap-2">
+            <button id="addItemBtn" class="btn-primary text-sm">
+              <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Item
+            </button>
+            <button id="loadSampleBtn" class="btn-secondary text-sm">
+              Load Sample Data
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="data-table" id="scaffoldingTable">
+            <thead>
+              <tr>
+                <th style="min-width: 150px;">Description</th>
+                <th style="min-width: 70px;">Length (m)</th>
+                <th style="min-width: 70px;">Width (m)</th>
+                <th style="min-width: 70px;">Height (m)</th>
+                <th style="min-width: 60px;">Qty</th>
+                <th style="min-width: 60px;">Factor</th>
+                <th style="min-width: 80px;">Volume (m3)</th>
+                <th style="min-width: 70px;">Weeks</th>
+                <th style="min-width: 100px;">Assembly</th>
+                <th style="min-width: 100px;">Disassembly</th>
+                <th style="min-width: 100px;">Rental</th>
+                <th style="min-width: 110px;">Total</th>
+                <th style="min-width: 50px;"></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamic rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="animate-fade-in-up stagger-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Totals Card -->
+        <div class="lg:col-span-2 card">
+          <div class="p-4 border-b border-[var(--border)]">
+            <h3 class="font-semibold flex items-center gap-2">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Cost Summary
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
+                <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-2">Total Volume</div>
+                <div class="text-2xl font-semibold font-mono" id="summaryVolume">0</div>
+                <div class="text-xs text-[var(--fg-secondary)]">m3</div>
+              </div>
+              <div class="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
+                <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-2">Assembly</div>
+                <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="summaryAssembly">EUR 0</div>
+              </div>
+              <div class="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
+                <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-2">Disassembly</div>
+                <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="summaryDisassembly">EUR 0</div>
+              </div>
+              <div class="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
+                <div class="text-xs text-[var(--fg-muted)] uppercase tracking-wide mb-2">Rental</div>
+                <div class="text-2xl font-semibold font-mono text-[var(--accent)]" id="summaryRental">EUR 0</div>
+              </div>
+            </div>
+            <div class="bg-[var(--accent)] rounded-xl p-6 accent-glow">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm text-[var(--bg-primary)]/70 uppercase tracking-wide">Total Project Cost</div>
+                  <div class="text-4xl font-bold font-mono text-[var(--bg-primary)]" id="summaryTotal">EUR 0.00</div>
+                </div>
+                <div class="w-16 h-16 rounded-full bg-[var(--bg-primary)]/10 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-[var(--bg-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="card">
+          <div class="p-4 border-b border-[var(--border)]">
+            <h3 class="font-semibold flex items-center gap-2">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              Export
+            </h3>
+          </div>
+          <div class="p-4 space-y-3">
+            <button id="exportCSVBtn" class="w-full btn-secondary text-left flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Export to CSV
+            </button>
+            <button id="exportPDFBtn" class="w-full btn-secondary text-left flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+              Print Report
+            </button>
+            <button id="saveProjectBtn" class="w-full btn-secondary text-left flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+              </svg>
+              Save Project
+            </button>
+            <button id="loadProjectBtn" class="w-full btn-secondary text-left flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              Load Project
+            </button>
+            <input type="file" id="fileInput" accept=".json" class="hidden">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.5s; opacity: 0;">
+      <div class="card p-4">
+        <h4 class="font-semibold mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Important Notes
+        </h4>
+        <ul class="text-sm text-[var(--fg-secondary)] space-y-2">
+          <li class="flex items-start gap-2">
+            <span class="text-[var(--accent)] mt-1">-</span>
+            <span>These prices apply to <strong class="text-[var(--fg-primary)]">standing scaffolds</strong> (staande steigers)</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-[var(--accent)] mt-1">-</span>
+            <span>For <strong class="text-[var(--fg-primary)]">hanging scaffolds</strong> (hangsteigers), use a factor of <strong class="text-[var(--accent)]">3.5</strong></span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-[var(--accent)] mt-1">-</span>
+            <span>Volume calculation: Length x Width x Height x Quantity x Factor</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-[var(--accent)] mt-1">-</span>
+            <span>Rental costs apply only when the period (weeks) is greater than 0</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-content">
+      <div class="p-4 border-b border-[var(--border)] flex items-center justify-between">
+        <h3 class="font-semibold text-lg" id="settingsTitle">Settings & Unit Rates</h3>
+        <button class="modal-close p-2 hover:bg-[var(--bg-elevated)] rounded-lg transition-colors" aria-label="Close modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="p-4">
+        <!-- Tabs -->
+        <div class="flex border-b border-[var(--border)] mb-4">
+          <button class="tab-btn active" data-tab="rates">Unit Rates</button>
+          <button class="tab-btn" data-tab="project">Project Info</button>
+        </div>
+        
+        <!-- Rates Tab -->
+        <div id="ratesTab" class="tab-content">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Assembly Rate (EUR/m3)</label>
+              <input type="number" step="0.01" id="inputAssemblyRate" class="input-field w-full" value="18.67">
+              <p class="text-xs text-[var(--fg-muted)] mt-1">Recommended: 10-20 EUR/m3</p>
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Disassembly Rate (EUR/m3)</label>
+              <input type="number" step="0.01" id="inputDisassemblyRate" class="input-field w-full" value="18.67">
+              <p class="text-xs text-[var(--fg-muted)] mt-1">Typically equal to assembly rate</p>
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Weekly Rental Rate (EUR/m3/week)</label>
+              <input type="number" step="0.01" id="inputRentalRate" class="input-field w-full" value="0.41">
+              <p class="text-xs text-[var(--fg-muted)] mt-1">Recommended: 0.30-0.70 EUR/m3/week</p>
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Hanging Scaffold Factor</label>
+              <input type="number" step="0.1" id="inputHangingFactor" class="input-field w-full" value="3.5">
+              <p class="text-xs text-[var(--fg-muted)] mt-1">Multiplier for hanging scaffolds</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project Tab -->
+        <div id="projectTab" class="tab-content hidden">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Project Name</label>
+              <input type="text" id="inputProjectName" class="input-field w-full" placeholder="Enter project name">
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Price Level Region</label>
+              <select id="inputRegion" class="input-field w-full">
+                <option value="Western Europe">Western Europe</option>
+                <option value="Northern Europe">Northern Europe</option>
+                <option value="Southern Europe">Southern Europe</option>
+                <option value="Eastern Europe">Eastern Europe</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Price Level Date</label>
+              <input type="month" id="inputPriceDate" class="input-field w-full">
+            </div>
+            <div>
+              <label class="block text-sm text-[var(--fg-secondary)] mb-2">Currency</label>
+              <select id="inputCurrency" class="input-field w-full">
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-[var(--border)] flex justify-end gap-3">
+        <button class="btn-secondary modal-close">Cancel</button>
+        <button class="btn-primary" id="saveSettingsBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="addItemModal" role="dialog" aria-modal="true" aria-labelledby="addItemTitle">
+    <div class="modal-content">
+      <div class="p-4 border-b border-[var(--border)] flex items-center justify-between">
+        <h3 class="font-semibold text-lg" id="addItemTitle">Add Scaffolding Item</h3>
+        <button class="modal-close p-2 hover:bg-[var(--bg-elevated)] rounded-lg transition-colors" aria-label="Close modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="p-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Description</label>
+            <input type="text" id="newDescription" class="input-field w-full" placeholder="e.g., Main Building Facade">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Length (m)</label>
+            <input type="number" step="0.01" id="newLength" class="input-field w-full" value="10">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Width (m)</label>
+            <input type="number" step="0.01" id="newWidth" class="input-field w-full" value="2">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Height (m)</label>
+            <input type="number" step="0.01" id="newHeight" class="input-field w-full" value="5">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Quantity</label>
+            <input type="number" step="1" id="newQuantity" class="input-field w-full" value="1">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Factor</label>
+            <input type="number" step="0.1" id="newFactor" class="input-field w-full" value="1">
+          </div>
+          <div>
+            <label class="block text-sm text-[var(--fg-secondary)] mb-2">Period (weeks)</label>
+            <input type="number" step="1" id="newWeeks" class="input-field w-full" value="4">
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-[var(--border)] flex justify-end gap-3">
+        <button class="btn-secondary modal-close">Cancel</button>
+        <button class="btn-primary" id="confirmAddItemBtn">Add Item</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-[var(--border)] mt-12 py-6 no-print">
+    <div class="max-w-7xl mx-auto px-4 text-center text-sm text-[var(--fg-muted)]">
+      <p>SteigerCalc Pro - Professional Scaffolding Cost Estimator</p>
+      <p class="mt-1">Price Level: Western Europe, Q1 2026 | For standing scaffolds</p>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================
+    // DATA & STATE
+    // ============================================
+    
+    // Initialize settings with defaults
+    let settings = {
+      assemblyRate: 18.67,
+      disassemblyRate: 18.67,
+      rentalRate: 0.41,
+      hangingFactor: 3.5,
+      projectName: '',
+      region: 'Western Europe',
+      priceDate: '2026-03',
+      currency: 'EUR'
+    };
+
+    // Sample data from the Excel file
+    const sampleData = [
+      { description: 'NaCl 1', length: 56, width: 1.5, height: 28, quantity: 1, factor: 1.2, weeks: 0 },
+      { description: 'NaCl 2', length: 28, width: 1.5, height: 26, quantity: 1, factor: 1.1, weeks: 0 },
+      { description: 'HCl', length: 10, width: 5, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'NaOH', length: 10, width: 5, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'NaHSO3', length: 10, width: 5, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Leidingbrug west', length: 30, width: 2, height: 4, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Neutralisatiepompen', length: 15, width: 1.5, height: 2, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Mengbedden (incl HVAC)', length: 50, width: 2, height: 8, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Mengbedden', length: 50, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Mengbedden verbinding', length: 3, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'RO-Skids 1', length: 40, width: 2, height: 3, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'RO-Skids verbinding 1', length: 10, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'RO-Skids verbinding 2', length: 4, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Ontharders (incl HVAC)', length: 2.57, width: 2.57, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Ontharders', length: 2.57, width: 2.57, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Ontharders verbinding', length: 2.57, width: 2.57, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Onthardwaterpompen', length: 2.57, width: 2.57, height: 6, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Regeneratie Panelen', length: 10, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'CIP tank', length: 25, width: 1.5, height: 4, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Verbindingen tussen steigers 1', length: 30, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Verbindingen tussen steigers 2', length: 5, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Verbindingen tussen steigers 3', length: 5, width: 2, height: 5, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Distributiepompen', length: 12, width: 2, height: 3, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Blowers', length: 12, width: 2, height: 3, quantity: 1, factor: 1, weeks: 4 },
+      { description: 'Romneyloods (WTB en E&I)', length: 3, width: 1, height: 2, quantity: 6, factor: 1, weeks: 4 }
+    ];
+
+    // Current scaffolding items
+    let items = [];
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    function formatCurrency(value, currency = settings.currency) {
+      const symbols = { EUR: 'EUR', GBP: 'GBP', USD: 'USD', CHF: 'CHF' };
+      return `${symbols[currency] || 'EUR'} ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function calculateVolume(length, width, height, quantity, factor) {
+      const l = parseFloat(length) || 0;
+      const w = parseFloat(width) || 0;
+      const h = parseFloat(height) || 0;
+      const q = parseFloat(quantity) || 1;
+      const f = parseFloat(factor) || 1;
+      return l * w * h * q * f;
+    }
+
+    function calculateCosts(volume, weeks) {
+      const v = parseFloat(volume) || 0;
+      const w = parseFloat(weeks) || 0;
+      const assembly = v * settings.assemblyRate;
+      const disassembly = v * settings.disassemblyRate;
+      const rental = v * w * settings.rentalRate;
+      return { assembly, disassembly, rental, total: assembly + disassembly + rental };
+    }
+
+    // ============================================
+    // DOM ELEMENTS
+    // ============================================
+
+    const tableBody = document.getElementById('tableBody');
+    const settingsModal = document.getElementById('settingsModal');
+    const addItemModal = document.getElementById('addItemModal');
+
+    // ============================================
+    // RENDER FUNCTIONS
+    // ============================================
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+      
+      items.forEach((item, index) => {
+        const volume = calculateVolume(item.length, item.width, item.height, item.quantity, item.factor);
+        const costs = calculateCosts(volume, item.weeks);
+        
+        const row = document.createElement('tr');
+        row.dataset.index = index;
+        row.innerHTML = `
+          <td>
+            <input type="text" class="input-field" value="${item.description}" data-field="description" aria-label="Description">
+          </td>
+          <td>
+            <input type="number" step="0.01" class="input-field" value="${item.length}" data-field="length" aria-label="Length">
+          </td>
+          <td>
+            <input type="number" step="0.01" class="input-field" value="${item.width}" data-field="width" aria-label="Width">
+          </td>
+          <td>
+            <input type="number" step="0.01" class="input-field" value="${item.height}" data-field="height" aria-label="Height">
+          </td>
+          <td>
+            <input type="number" step="1" class="input-field" value="${item.quantity}" data-field="quantity" aria-label="Quantity">
+          </td>
+          <td>
+            <input type="number" step="0.1" class="input-field" value="${item.factor}" data-field="factor" aria-label="Factor">
+          </td>
+          <td class="text-[var(--fg-secondary)]">${volume.toFixed(1)}</td>
+          <td>
+            <input type="number" step="1" class="input-field" value="${item.weeks}" data-field="weeks" aria-label="Period in weeks">
+          </td>
+          <td class="text-[var(--accent)]">${formatCurrency(costs.assembly)}</td>
+          <td class="text-[var(--accent)]">${formatCurrency(costs.disassembly)}</td>
+          <td class="text-[var(--accent)]">${formatCurrency(costs.rental)}</td>
+          <td class="font-semibold">${formatCurrency(costs.total)}</td>
+          <td>
+            <button class="btn-danger delete-item" data-index="${index}" aria-label="Delete item">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      updateSummary();
+    }
+
+    function updateSummary() {
+      let totalVolume = 0;
+      let totalAssembly = 0;
+      let totalDisassembly = 0;
+      let totalRental = 0;
+      
+      items.forEach(item => {
+        const volume = calculateVolume(item.length, item.width, item.height, item.quantity, item.factor);
+        const costs = calculateCosts(volume, item.weeks);
+        totalVolume += volume;
+        totalAssembly += costs.assembly;
+        totalDisassembly += costs.disassembly;
+        totalRental += costs.rental;
+      });
+      
+      document.getElementById('summaryVolume').textContent = totalVolume.toFixed(1);
+      document.getElementById('summaryAssembly').textContent = formatCurrency(totalAssembly);
+      document.getElementById('summaryDisassembly').textContent = formatCurrency(totalDisassembly);
+      document.getElementById('summaryRental').textContent = formatCurrency(totalRental);
+      document.getElementById('summaryTotal').textContent = formatCurrency(totalAssembly + totalDisassembly + totalRental);
+    }
+
+    function updateDisplayRates() {
+      document.getElementById('displayAssemblyRate').textContent = formatCurrency(settings.assemblyRate);
+      document.getElementById('displayDisassemblyRate').textContent = formatCurrency(settings.disassemblyRate);
+      document.getElementById('displayRentalRate').textContent = formatCurrency(settings.rentalRate);
+      document.getElementById('priceLevelTitle').textContent = `Price Level: ${settings.region}, ${formatPriceDate(settings.priceDate)}`;
+    }
+
+    function formatPriceDate(dateStr) {
+      if (!dateStr) return 'Current';
+      const [year, month] = dateStr.split('-');
+      const quarters = ['Q1', 'Q1', 'Q1', 'Q2', 'Q2', 'Q2', 'Q3', 'Q3', 'Q3', 'Q4', 'Q4', 'Q4'];
+      return `${quarters[parseInt(month) - 1]} ${year}`;
+    }
+
+    // ============================================
+    // EVENT HANDLERS
+    // ============================================
+
+    // Table input changes
+    tableBody.addEventListener('input', (e) => {
+      if (e.target.matches('input')) {
+        const row = e.target.closest('tr');
+        const index = parseInt(row.dataset.index);
+        const field = e.target.dataset.field;
+        const value = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
+        
+        if (index >= 0 && index < items.length && field) {
+          items[index][field] = value;
+          renderTable();
+        }
+      }
+    });
+
+    // Delete item
+    tableBody.addEventListener('click', (e) => {
+      const deleteBtn = e.target.closest('.delete-item');
+      if (deleteBtn) {
+        const index = parseInt(deleteBtn.dataset.index);
+        items.splice(index, 1);
+        renderTable();
+      }
+    });
+
+    // Modal controls
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        settingsModal.classList.remove('active');
+        addItemModal.classList.remove('active');
+      });
+    });
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+
+    // Settings button
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+      document.getElementById('inputAssemblyRate').value = settings.assemblyRate;
+      document.getElementById('inputDisassemblyRate').value = settings.disassemblyRate;
+      document.getElementById('inputRentalRate').value = settings.rentalRate;
+      document.getElementById('inputHangingFactor').value = settings.hangingFactor;
+      document.getElementById('inputProjectName').value = settings.projectName;
+      document.getElementById('inputRegion').value = settings.region;
+      document.getElementById('inputPriceDate').value = settings.priceDate;
+      document.getElementById('inputCurrency').value = settings.currency;
+      settingsModal.classList.add('active');
+    });
+
+    // Edit rates button
+    document.getElementById('editRatesBtn').addEventListener('click', () => {
+      document.getElementById('settingsBtn').click();
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+        document.getElementById(`${btn.dataset.tab}Tab`).classList.remove('hidden');
+      });
+    });
+
+    // Save settings
+    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+      settings.assemblyRate = parseFloat(document.getElementById('inputAssemblyRate').value) || 18.67;
+      settings.disassemblyRate = parseFloat(document.getElementById('inputDisassemblyRate').value) || 18.67;
+      settings.rentalRate = parseFloat(document.getElementById('inputRentalRate').value) || 0.41;
+      settings.hangingFactor = parseFloat(document.getElementById('inputHangingFactor').value) || 3.5;
+      settings.projectName = document.getElementById('inputProjectName').value;
+      settings.region = document.getElementById('inputRegion').value;
+      settings.priceDate = document.getElementById('inputPriceDate').value;
+      settings.currency = document.getElementById('inputCurrency').value;
+      
+      updateDisplayRates();
+      renderTable();
+      settingsModal.classList.remove('active');
+      saveToLocalStorage();
+    });
+
+    // Add item button
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+      document.getElementById('newDescription').value = '';
+      document.getElementById('newLength').value = 10;
+      document.getElementById('newWidth').value = 2;
+      document.getElementById('newHeight').value = 5;
+      document.getElementById('newQuantity').value = 1;
+      document.getElementById('newFactor').value = 1;
+      document.getElementById('newWeeks').value = 4;
+      addItemModal.classList.add('active');
+    });
+
+    // Confirm add item
+    document.getElementById('confirmAddItemBtn').addEventListener('click', () => {
+      const newItem = {
+        description: document.getElementById('newDescription').value || 'New Item',
+        length: parseFloat(document.getElementById('newLength').value) || 10,
+        width: parseFloat(document.getElementById('newWidth').value) || 2,
+        height: parseFloat(document.getElementById('newHeight').value) || 5,
+        quantity: parseFloat(document.getElementById('newQuantity').value) || 1,
+        factor: parseFloat(document.getElementById('newFactor').value) || 1,
+        weeks: parseFloat(document.getElementById('newWeeks').value) || 4
+      };
+      
+      items.push(newItem);
+      renderTable();
+      addItemModal.classList.remove('active');
+      saveToLocalStorage();
+    });
+
+    // Load sample data
+    document.getElementById('loadSampleBtn').addEventListener('click', () => {
+      items = JSON.parse(JSON.stringify(sampleData));
+      renderTable();
+      saveToLocalStorage();
+    });
+
+    // Export CSV
+    document.getElementById('exportCSVBtn').addEventListener('click', () => {
+      let csv = 'Description,Length (m),Width (m),Height (m),Quantity,Factor,Volume (m3),Period (weeks),Assembly Cost,Disassembly Cost,Rental Cost,Total Cost\n';
+      
+      items.forEach(item => {
+        const volume = calculateVolume(item.length, item.width, item.height, item.quantity, item.factor);
+        const costs = calculateCosts(volume, item.weeks);
+        csv += `"${item.description}",${item.length},${item.width},${item.height},${item.quantity},${item.factor},${volume.toFixed(2)},${item.weeks},${costs.assembly.toFixed(2)},${costs.disassembly.toFixed(2)},${costs.rental.toFixed(2)},${costs.total.toFixed(2)}\n`;
+      });
+      
+      const totalVolume = items.reduce((sum, item) => sum + calculateVolume(item.length, item.width, item.height, item.quantity, item.factor), 0);
+      const totalCosts = items.reduce((sum, item) => {
+        const volume = calculateVolume(item.length, item.width, item.height, item.quantity, item.factor);
+        const costs = calculateCosts(volume, item.weeks);
+        return {
+          assembly: sum.assembly + costs.assembly,
+          disassembly: sum.disassembly + costs.disassembly,
+          rental: sum.rental + costs.rental
+        };
+      }, { assembly: 0, disassembly: 0, rental: 0 });
+      
+      csv += `\nTOTAL,,,,,,${totalVolume.toFixed(2)},,${totalCosts.assembly.toFixed(2)},${totalCosts.disassembly.toFixed(2)},${totalCosts.rental.toFixed(2)},${(totalCosts.assembly + totalCosts.disassembly + totalCosts.rental).toFixed(2)}\n`;
+      csv += `\nUnit Rates:,,,,,,,\nAssembly Rate: ${settings.assemblyRate} ${settings.currency}/m3,,,,,,,\nDisassembly Rate: ${settings.disassemblyRate} ${settings.currency}/m3,,,,,,,\nRental Rate: ${settings.rentalRate} ${settings.currency}/m3/week,,,,,,,\n`;
+      csv += `\nPrice Level: ${settings.region}, ${formatPriceDate(settings.priceDate)},,,,,,,\n`;
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `scaffolding-costs-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Print report
+    document.getElementById('exportPDFBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Save project
+    document.getElementById('saveProjectBtn').addEventListener('click', () => {
+      const project = {
+        settings,
+        items,
+        savedAt: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `scaffolding-project-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Load project
+    document.getElementById('loadProjectBtn').addEventListener('click', () => {
+      document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const project = JSON.parse(event.target.result);
+            if (project.settings && project.items) {
+              settings = { ...settings, ...project.settings };
+              items = project.items;
+              updateDisplayRates();
+              renderTable();
+              saveToLocalStorage();
+            }
+          } catch (err) {
+            alert('Invalid project file');
+          }
+        };
+        reader.readAsText(file);
+      }
+      e.target.value = '';
+    });
+
+    // ============================================
+    // LOCAL STORAGE
+    // ============================================
+
+    function saveToLocalStorage() {
+      localStorage.setItem('steigercalc_settings', JSON.stringify(settings));
+      localStorage.setItem('steigercalc_items', JSON.stringify(items));
+    }
+
+    function loadFromLocalStorage() {
+      const savedSettings = localStorage.getItem('steigercalc_settings');
+      const savedItems = localStorage.getItem('steigercalc_items');
+      
+      if (savedSettings) {
+        try {
+          settings = { ...settings, ...JSON.parse(savedSettings) };
+        } catch (e) {
+          console.warn('Failed to load settings from localStorage');
+        }
+      }
+      
+      if (savedItems) {
+        try {
+          items = JSON.parse(savedItems);
+        } catch (e) {
+          console.warn('Failed to load items from localStorage');
+        }
+      }
+    }
+
+    // ============================================
+    // PWA INSTALLATION
+    // ============================================
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove('hidden');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.classList.add('hidden');
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    // ============================================
+    // SERVICE WORKER REGISTRATION
+    // ============================================
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered'))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+
+    // ============================================
+    // KEYBOARD NAVIGATION
+    // ============================================
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        settingsModal.classList.remove('active');
+        addItemModal.classList.remove('active');
+      }
+    });
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+
+    loadFromLocalStorage();
+    updateDisplayRates();
+    
+    if (items.length === 0) {
+      items = JSON.parse(JSON.stringify(sampleData));
+    }
+    
+    renderTable();
+  </script>
+</body>
+</html>
